@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Prototype 2 ‚Äî Relationship-led linked views</title>
+<style>
+:root{--bg:#f7f7f4;--card:#fff;--ink:#171717;--muted:#666;--line:#ddd;--accent:#315b8a;--accent2:#8a5b31;--sel:#7a3e8e;--soft:#ece6ef}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--ink)}
+.wrap{max-width:1220px;margin:0 auto;padding:28px}.top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:18px}.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}.title{font-size:28px;font-weight:750;margin:4px 0 6px}.sub{color:var(--muted);max-width:860px;line-height:1.45}.badge{font-size:12px;border:1px solid #d3d3ce;background:#fff;border-radius:999px;padding:7px 10px;white-space:nowrap}.card{background:var(--card);border:1px solid #deded8;border-radius:14px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.grid{display:grid;grid-template-columns:1.55fr .95fr;gap:16px}.scatter-card{grid-row:span 2}.card h2{font-size:17px;margin:0 0 3px}.hint{color:var(--muted);font-size:13px;margin-bottom:10px}.row{display:flex;align-items:center;gap:10px}.btn{border:1px solid #cfcfc8;background:#fff;border-radius:8px;padding:7px 10px;font:inherit;font-size:13px;cursor:pointer}.btn:hover{background:#f4f4ef}.stats{display:flex;gap:16px;flex-wrap:wrap;margin:8px 0 2px}.stat{font-size:12px;color:var(--muted)}.stat b{color:var(--ink);font-size:14px}.range{font-size:13px;font-weight:700;color:var(--sel)}svg{width:100%;height:auto;display:block;user-select:none}.gridline{stroke:#ecece7}.pt{fill:#315b8a;opacity:.22}.pt.sel{fill:var(--sel);opacity:.72}.pt.dim{opacity:.035}.brushbox{fill:rgba(122,62,142,.14);stroke:var(--sel);stroke-width:1.5;stroke-dasharray:5 3}.plot-bg{fill:#fbfbf8;cursor:crosshair;touch-action:none}.tooltip{position:fixed;pointer-events:none;background:#111;color:#fff;padding:8px 10px;border-radius:8px;font-size:12px;line-height:1.35;opacity:0;transform:translate(10px,10px);z-index:10}.glyph-wrap{display:flex;gap:4px;justify-content:space-between;align-items:flex-start;margin-top:8px}.glyph-card{flex:1;border:1px solid #ecebe5;border-radius:10px;padding:6px 4px;text-align:center;background:#fcfcfa;cursor:pointer;transition:.12s}.glyph-card:hover,.glyph-card.active{border-color:#8b6b95;background:#f7f1f8;box-shadow:0 0 0 2px rgba(122,62,142,.08) inset}.glyph-label{font-size:10px;color:#555;line-height:1.2;min-height:28px;margin-top:1px}.glyph-n{font-size:10px;color:#777;margin-top:2px}.glyph-note{font-size:11px;color:#666;margin:4px 0 8px}.legend{font-size:11px;color:#666;line-height:1.45;margin-top:8px}.legend b{color:#333}.age-row{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;align-items:end;height:150px;margin:10px 4px 0}.agebar{position:relative;height:100%;display:flex;align-items:flex-end}.barall{width:100%;background:#d7dde4;border-radius:3px 3px 0 0;min-height:2px}.barsel{position:absolute;bottom:0;left:0;width:100%;background:var(--sel);border-radius:3px 3px 0 0;min-height:0}.age-labels{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;font-size:9px;color:#777;text-align:center;margin:3px 4px 0}.note{font-size:11px;color:#777;margin-top:10px;line-height:1.4}.footer{font-size:11px;color:#777;margin-top:14px}.view-num{font-size:18px;font-weight:800;color:var(--sel);display:inline-block;margin-right:6px;transition:transform .12s}.view-num:hover{transform:scale(1.45)}.focus-help{font-size:11px;color:#777;margin:-3px 0 12px}.focus-nav{display:none;gap:8px;align-items:center;margin:0 0 12px}.focus-mode .focus-nav{display:flex}.focus-mode .grid{display:block}.focus-mode .card.view{display:none}.focus-mode .card.view.focused{display:block;width:100%}.focus-mode .card.view.focused svg{max-height:70vh}.focus-mode .card.view.focused .glyph-wrap{max-width:760px;margin-left:auto;margin-right:auto}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.scatter-card{grid-row:auto}.glyph-wrap{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.top{flex-direction:column}.wrap{padding:16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div><div class="eyebrow">CS 1710 ¬∑ Prototype 2</div><div class="title">Who is inside an interesting adult-talk ‚Üî child-speech pattern?</div><div class="sub">The relationship itself is the entry point. Click and hold inside the scatterplot, drag a rectangle around an interesting cluster, then release. The linked age profile and maternal-education glyphs update to describe the selected recordings.</div></div>
+    <div class="badge">Relationship-led coordinated views</div>
+  </div>
+  <div class="focus-nav" id="focusNav"><button class="btn" id="prewView">‚Üê Previous</button><b id="focusLabel">View 1</b><button class="btn" id="nextView">Next ‚Üí</button><button class="btn" id="exitFocus">Exit focus</button></div>
+  <div class="focus-help">Hover a view number to enlarge it. Double-click 1, 2, or 3 to focus that view.</div>
+  <div class="grid">
+    <section class="card scatter-card view" id="view1" data-view="1">
+      <div class="row" style="justify-content:space-between"><div><h2><span class="view-num" title="Double-click to focus">1</span>Brush the relationship</h2><div class="hint">Click-hold-drag-release to select a rectangular region. A simple click does nothing.</div></div><button class="btn" id="reset">Reset selection</button></div>
+      <div class="range" id="selLabel">All recordings</div>
+      <svg id="scatter" viewBox="0 0 720 560" aria-label="Adult talk versus child speech scatterplot"></svg>
+      <div class="stats"><div class="stat"><b id="nSel">0</b> selected</div><div class="stat">Mean age <b id="meanAge">‚Äî</b> mo</div><div class="stat">Mean adult talk <b id="meanA">‚Äî</b>/hr</div><div class="stat">Mean child speech <b id="meanC">‚Äî</b>/hr</div></div>
+    </section>
+    <section class="card view" id="view2" data-view="2">
+      <h2><span class="view-num" title="Double-click to focus">2</span>Maternal-education glyphs</h2>
+      <div class="hint">Each glyph summarizes the brushed recordings in one maternal-education group. Click to filter linked views. Ctrl/Cmd-click lets you select multiple groups at once.</div>
+      <div class="glyph-note">The five glyphs are deliberately aligned side by side at the same scale so size differences are easier to compare.</div>
+      <div class="range" id="glyphFilterLabel" style="margin:4px 0 2px">No education filter</div><div class="glyph-wrap" id="glyphs"></div>
+      <div class="legend"><b>Outer ring area</b> = mean adult-talk rate ¬∑ <b>Inner disk area</b> = mean child-speech rate ¬∑ <b>Whisker</b> = within-group child-speech spread (10th‚Äì90th percentile). Empty groups remain visible but muted.</div>
+    </section>
+    <section class="card view" id="view3" data-view="3">
+      <h2><span class="view-num" title="Double-click to focus">3</span>Age profile of the active selection</h2>
+      <div class="hint">Gray bars show all recordings; purple bars show the current scatterplot selection after any maternal-education glyph filters are applied.</div>
+      <div class="age-row" id="ageBars"></div><div class="age-labels" id="ageLabels"></div>
+      <div class="note">This view answers ‚Äúwho is in that cluster?‚Äù without requiring the user to leave the main relationship view.</div>
+    </section>
+  </div>
+  <div class="footer">Interaction prototype using the Bergelson et al. variable structure. This prototype uses deterministic mock observations shaped to the study‚Äôs variables and reported relationships; replace with the public OSF rows before drawing substantive conclusions.</div>
+</div>
+<div class="tooltip" id="tip"></div>
+<script>
+function rng(seed){let s=seed>>>0;return()=>((s=(s*1664525+1013904223)>>>0)/4294967296)}
+const R=rng(17102), edLevels=['< HS','High school','Some college','Bachelor','> Bachelor'], data=[];
+for(let i=0;i<905ÛΩ˚r´≤⁄Óù∆≠y⁄[ù
+
+_Bôù[ò›[€à\]P[
+
+^ÿ€€ú›úù\⁄\úèXúù\⁄Y
+
+KOYYôôX›]ôJ
+NŸÿ›[Y[ùôŸ][[Y[ùûRY
+	€îŸ[	 Kù^€€ù[ùXKõ[ô›Ÿÿ›[Y[ùôŸ][[Y[ùûRY
+	€YX[êYŸI Kù^€€ù[ùXKõ[ô›€YX[äKOôòYŸJKù—ö^Y
+JNâ¯†%';document.getElementById('meanA').textContent=a.length?fmt(mean(a,d=>d.adult)):'‚Äî';document.getElementById('meanC').textContent=a.length?fmt(mean(a,d=>d.child)):'‚Äî';document.getElementById('glyphFilterLabel').textContent=activeEds.size?`Filtering linked views: ${[...activeEds].sort().map(i=>edLevels[i]).join(', ')}`:'No education filter';updatePointsOnly();updateGlyphs(brushArr);updateAge(a)}
+updateAll();
+
+// Simple focus mode: double-click a view number to make that view primary.
+const views=[1,2,3];let focusView=null;
+function setFocus(n){focusView=n;document.body.classList.toggle('focus-mode',n!==null);views.forEach(v=>document.getElementById(`view${v}`).classList.toggle('focused',v===n));document.getElementById('focusLabel').textContent=n?`View ${n}`:'';}
+function cycleFocus(delta){if(focusView===null)return;let i=views.indexOf(focusView);setFocus(views[(i+delta+views.length)%views.length]);}
+document.querySelectorAll('.view-num').forEach(el=>el.addEventListener('dblclick',ev=>{ev.stopPropagation();setFocus(Number(el.closest('.view').dataset.view));}));
+document.getElementById('prevView').onclick=()=>cycleFocus(-1);document.getElementById('nextView').onclick=()=>cycleFocus(1);document.getElementById('exitFocus').onclick=()=>setFocus(null);
+document.addEventListener('keydown',ev=>{if(focusView!==null&&ev.key==='ArrowLeft')cycleFocus(-1);if(focusView!==null&&ev.key==='ArrowRight')cycleFocus(1);if(focusView!==null&&ev.key==='Escape')setFocus(null);});
+
+</script>
+</body>
+</html>
